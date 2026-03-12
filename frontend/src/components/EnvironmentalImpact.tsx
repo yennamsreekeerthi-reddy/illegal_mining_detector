@@ -12,7 +12,7 @@ type ImpactPoint = {
 }
 
 const impactByLevel: Record<RiskLevel, ImpactPoint[]> = {
-  High: [
+  'High Risk': [
     {
       icon: '🌿',
       title: 'Severe Vegetation Removal',
@@ -34,7 +34,7 @@ const impactByLevel: Record<RiskLevel, ImpactPoint[]> = {
       description: 'Ecological corridors and species habitats may be significantly disrupted.',
     },
   ],
-  Medium: [
+  'Medium Risk': [
     {
       icon: '🌱',
       title: 'Partial Vegetation Disturbance',
@@ -56,7 +56,7 @@ const impactByLevel: Record<RiskLevel, ImpactPoint[]> = {
       description: 'Wildlife movement can be impacted by expanding extraction pockets.',
     },
   ],
-  Low: [
+  'Low Risk': [
     {
       icon: '🌾',
       title: 'Minor Disturbance',
@@ -78,10 +78,54 @@ const impactByLevel: Record<RiskLevel, ImpactPoint[]> = {
       description: 'Some ecological stress may emerge if disturbance area increases over time.',
     },
   ],
+  'No Mining': [
+    {
+      icon: '🌍',
+      title: 'No Significant Disturbance',
+      description: 'Current analysis suggests the terrain remains stable with no actionable mining signatures.',
+    },
+    {
+      icon: '🌱',
+      title: 'Vegetation Largely Intact',
+      description: 'Land-cover continuity appears strong with minimal indication of canopy removal.',
+    },
+    {
+      icon: '💧',
+      title: 'Low Water Stress Risk',
+      description: 'No immediate indicators of runoff-linked contamination from extraction activity.',
+    },
+    {
+      icon: '🦋',
+      title: 'Biodiversity Conditions Stable',
+      description: 'No major habitat fragmentation signals detected in the analyzed frame.',
+    },
+  ],
+  None: [
+    {
+      icon: '🛰️',
+      title: 'Image Validation Warning',
+      description: 'Uploaded image may not be a valid satellite land scene for mining impact analysis.',
+    },
+    {
+      icon: '📷',
+      title: 'Re-upload Recommended',
+      description: 'Use a clear satellite land image with visible terrain and surface features.',
+    },
+    {
+      icon: '🧭',
+      title: 'No Reliable Ecological Signal',
+      description: 'Environmental metrics are withheld when land-scene confidence is insufficient.',
+    },
+    {
+      icon: '🧪',
+      title: 'Quality Control Triggered',
+      description: 'Validation safeguards prevented false-positive mining assessment on non-land imagery.',
+    },
+  ],
 }
 
 function EnvironmentalImpact({ riskLevel, miningDetected }: EnvironmentalImpactProps) {
-  const effectiveLevel: RiskLevel = miningDetected && riskLevel ? riskLevel : 'Low'
+  const effectiveLevel: RiskLevel = riskLevel ?? (miningDetected ? 'Low Risk' : 'No Mining')
   const cards = impactByLevel[effectiveLevel]
 
   return (
@@ -89,7 +133,7 @@ function EnvironmentalImpact({ riskLevel, miningDetected }: EnvironmentalImpactP
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">Environmental Impact Insights</h3>
         <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-300 ring-1 ring-slate-600">
-          Assessment Level: {miningDetected ? `${effectiveLevel} Risk` : 'Stable Conditions'}
+          Assessment Level: {effectiveLevel}
         </span>
       </div>
 

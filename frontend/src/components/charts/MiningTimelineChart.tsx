@@ -18,7 +18,8 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']
 
 function MiningTimelineChart({ disturbedRatio, riskLevel }: MiningTimelineChartProps) {
   const baseline = Math.max(1, disturbedRatio * 100)
-  const growthFactor = riskLevel === 'High' ? 1.45 : riskLevel === 'Medium' ? 1.2 : 1.05
+  const growthFactor =
+    riskLevel === 'High Risk' ? 1.45 : riskLevel === 'Medium Risk' ? 1.2 : riskLevel === 'Low Risk' ? 1.1 : 1.03
 
   const data = months.map((month, index) => {
     const trend = baseline * Math.pow(growthFactor, index / 3)

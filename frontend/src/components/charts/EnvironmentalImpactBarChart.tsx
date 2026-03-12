@@ -2,23 +2,23 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import type { EnvironmentalImpactMetrics } from '../../types/detection'
 
 interface EnvironmentalImpactBarChartProps {
-  impact?: EnvironmentalImpactMetrics
+  impact?: Partial<EnvironmentalImpactMetrics>
   miningDetected: boolean
 }
 
 function EnvironmentalImpactBarChart({ impact, miningDetected }: EnvironmentalImpactBarChartProps) {
-  const metrics: EnvironmentalImpactMetrics = impact ?? {
-    vegetation_loss: 0,
-    soil_erosion_risk: 0,
-    water_pollution_risk: 0,
-    habitat_damage: 0,
+  const metrics: EnvironmentalImpactMetrics = {
+    vegetation_loss: impact?.vegetation_loss ?? 0,
+    soil_erosion_risk: impact?.soil_erosion_risk ?? 0,
+    water_pollution_risk: impact?.water_pollution_risk ?? 0,
+    biodiversity_loss: impact?.biodiversity_loss ?? 0,
   }
 
   const data = [
     { name: 'Vegetation Loss', value: metrics.vegetation_loss },
     { name: 'Soil Erosion', value: metrics.soil_erosion_risk },
     { name: 'Water Pollution', value: metrics.water_pollution_risk },
-    { name: 'Habitat Damage', value: metrics.habitat_damage },
+    { name: 'Biodiversity Loss', value: metrics.biodiversity_loss },
   ]
 
   return (

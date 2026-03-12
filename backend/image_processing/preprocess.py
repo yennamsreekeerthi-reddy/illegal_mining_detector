@@ -38,8 +38,16 @@ def preprocess_image(image: np.ndarray) -> np.ndarray:
 
     # 4) Disturbance evidence = exposed soil + edges, only outside vegetation/farmland.
     combined = cv2.bitwise_or(soil_mask, edges)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-    cleaned = cv2.morphologyEx(combined, cv2.MORPH_CLOSE, kernel, iterations=2)
-    cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_OPEN, kernel, iterations=1)
+
+    # Robust cleanup for noisy satellite textures.
+    open_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    close_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+
+    cleaned = cv2.morphologyEx(combined, cv2.MORPH_OPEN, open_kernel, iterations=2)
+    cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, close_kernel, iterations=2)
+
+    # Smooth mask before contour extraction in downstream detector.
+    cleaned = cv2.GaussianBlur(cleaned, (5, 5), 0)
+    _, cleaned = cv2.threshold(cleaned, 35, 255, cv2.THRESH_BINARY)
 
     return cleaned

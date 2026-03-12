@@ -7,19 +7,23 @@ interface RiskGaugeChartProps {
 }
 
 const riskValueMap: Record<RiskLevel, number> = {
-  Low: 33,
-  Medium: 66,
-  High: 100,
+  None: 0,
+  'No Mining': 10,
+  'Low Risk': 35,
+  'Medium Risk': 70,
+  'High Risk': 100,
 }
 
 const riskColorMap: Record<RiskLevel, string> = {
-  Low: '#22c55e',
-  Medium: '#f59e0b',
-  High: '#ef4444',
+  None: '#94a3b8',
+  'No Mining': '#22c55e',
+  'Low Risk': '#84cc16',
+  'Medium Risk': '#f59e0b',
+  'High Risk': '#ef4444',
 }
 
 function RiskGaugeChart({ riskLevel, miningDetected }: RiskGaugeChartProps) {
-  const activeLevel: RiskLevel = miningDetected && riskLevel ? riskLevel : 'Low'
+  const activeLevel: RiskLevel = miningDetected && riskLevel ? riskLevel : 'No Mining'
   const value = miningDetected ? riskValueMap[activeLevel] : 10
   const color = miningDetected ? riskColorMap[activeLevel] : '#22c55e'
 

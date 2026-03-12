@@ -41,12 +41,22 @@ function DetectionResult({
   const processedImageDataUrl = result?.processed_image
     ? `data:image/jpeg;base64,${result.processed_image}`
     : ''
+  const heatmapImageDataUrl = result?.heatmap_image
+    ? `data:image/jpeg;base64,${result.heatmap_image}`
+    : ''
+
+  const impact = {
+    vegetation_loss: result?.environmental_impact?.vegetation_loss ?? 0,
+    soil_erosion_risk: result?.environmental_impact?.soil_erosion_risk ?? 0,
+    water_pollution_risk: result?.environmental_impact?.water_pollution_risk ?? 0,
+    biodiversity_loss: result?.environmental_impact?.biodiversity_loss ?? 0,
+  }
 
   const statusCard = !result || !result.mining_detected
     ? statusCardMap.safe
-    : result.risk_level === 'High'
+    : result.risk_level === 'High Risk'
       ? statusCardMap.high
-      : result.risk_level === 'Medium'
+      : result.risk_level === 'Medium Risk'
         ? statusCardMap.medium
         : statusCardMap.safe
 
@@ -80,13 +90,13 @@ function DetectionResult({
     report.text('Environmental Metrics', 40, y)
     y += 16
     report.setFont('helvetica', 'normal')
-    report.text(`Vegetation Loss: ${result.environmental_impact.vegetation_loss.toFixed(1)}%`, 40, y)
+    report.text(`Vegetation Loss: ${impact.vegetation_loss.toFixed(1)}%`, 40, y)
     y += 14
-    report.text(`Soil Erosion Risk: ${result.environmental_impact.soil_erosion_risk.toFixed(1)}%`, 40, y)
+    report.text(`Soil Erosion Risk: ${impact.soil_erosion_risk.toFixed(1)}%`, 40, y)
     y += 14
-    report.text(`Water Contamination Risk: ${result.environmental_impact.water_pollution_risk.toFixed(1)}%`, 40, y)
+    report.text(`Water Contamination Risk: ${impact.water_pollution_risk.toFixed(1)}%`, 40, y)
     y += 14
-    report.text(`Habitat Disruption: ${result.environmental_impact.habitat_damage.toFixed(1)}%`, 40, y)
+    report.text(`Biodiversity Loss: ${impact.biodiversity_loss.toFixed(1)}%`, 40, y)
     y += 22
 
     if (uploadedImageDataUrl) {
@@ -139,6 +149,12 @@ function DetectionResult({
 
       {!loading && result && (
         <div className="mt-5 space-y-4">
+          {result.message && (
+            <div className="rounded-xl border border-cyan-400/30 bg-cyan-500/10 p-4 text-sm text-cyan-100">
+              {result.message}
+            </div>
+          )}
+
           <div className={`rounded-xl border p-4 ${statusCard.cardClass}`}>
             <p className={`text-sm font-semibold ${statusCard.textClass}`}>
               {statusCard.icon} {statusCard.label}
@@ -191,6 +207,17 @@ function DetectionResult({
                   <img
                     src={processedImageDataUrl}
                     alt="Processed satellite analysis"
+                    className="max-h-[420px] w-full rounded-xl border border-slate-700 object-contain"
+                  />
+                </div>
+              )}
+
+              {result.heatmap_image && (
+                <div>
+                  <p className="mb-2 text-sm font-medium text-slate-300">Mining disturbance heatmap</p>
+                  <img
+                    src={heatmapImageDataUrl}
+                    alt="Mining disturbance heatmap"
                     className="max-h-[420px] w-full rounded-xl border border-slate-700 object-contain"
                   />
                 </div>
