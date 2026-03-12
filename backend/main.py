@@ -9,8 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from image_processing.preprocess import preprocess_image
-from model.mining_detector import (
+from backend.image_processing.preprocess import preprocess_image
+from backend.model.mining_detector import (
     build_environmental_impact,
     classify_risk,
     detect_mining_regions,
@@ -80,17 +80,19 @@ async def analyze_image(file: UploadFile = File(...)) -> dict[str, Any]:
 
 frontend_dist = os.path.join(os.path.dirname(__file__), "../frontend/dist")
 
-# serve JS/CSS assets
+# Serve static assets (JS/CSS)
 assets_path = os.path.join(frontend_dist, "assets")
 if os.path.exists(assets_path):
     app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
 
+@app.get("/")
+async def serve_frontend():
+    index_file = os.path.join(frontend_dist, "index.html")
+    return FileResponse(index_file)
+
+
 @app.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
     index_file = os.path.join(frontend_dist, "index.html")
-
-    if os.path.exists(index_file):
-        return FileResponse(index_file)
-
-    return {"message": "Frontend not built yet"}
+    return FileResponse(index_file)
